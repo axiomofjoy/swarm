@@ -1,6 +1,7 @@
 import json
 
 from swarm import Swarm
+from openinference.instrumentation import using_metadata
 
 
 def process_and_print_streaming_response(response):
@@ -66,22 +67,45 @@ def run_demo_loop(
     messages = []
     agent = starting_agent
 
+    iteration = 0
     while True:
-        user_input = input("\033[90mUser\033[0m: ")
-        messages.append({"role": "user", "content": user_input})
+        with using_metadata(
+            {
+                "agent": agent.name,
+                "iteration": iteration,
+            },
+        ):
+            agent = run_demo_loop_iteration(
+                client,
+                agent,
+                messages,
+                context_variables,
+                stream,
+                debug,
+            )
+        iteration += 1
 
-        response = client.run(
-            agent=agent,
-            messages=messages,
-            context_variables=context_variables or {},
-            stream=stream,
-            debug=debug,
-        )
 
-        if stream:
-            response = process_and_print_streaming_response(response)
-        else:
-            pretty_print_messages(response.messages)
-
-        messages.extend(response.messages)
-        agent = response.agent
+def run_demo_loop_iteration(
+    client,
+    agent,
+    messages,
+    context_variables,
+    stream,
+    debug,
+):
+    user_input = input("\033[90mUser\033[0m: ")
+    messages.append({"role": "user", "content": user_input})
+    response = client.run(
+        agent=agent,
+        messages=messages,
+        context_variables=context_variables or {},
+        stream=stream,
+        debug=debug,
+    )
+    if stream:
+        response = process_and_print_streaming_response(response)
+    else:
+        pretty_print_messages(response.messages)
+    messages.extend(response.messages)
+    return response.agent
