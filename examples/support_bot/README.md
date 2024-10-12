@@ -18,23 +18,23 @@ To start the support bot:
 2. Install the necessary additional libraries:
 
 ```shell
-make install
+pip install -r requirements.txt
 ```
 
 3. Initialize docker
 
 ```shell
-docker-compose up -d
+docker run -it -p 6333:6333 qdrant/qdrant:v1.3.0
 ```
 
 4. Prepare the vector DB:
 
 ```shell
-make prep
+python prep_data.py
 ```
 
 5. Run the main scripy:
 
 ```shell
-make run
+python main.py
 ```

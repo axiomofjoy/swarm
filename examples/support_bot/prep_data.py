@@ -49,8 +49,8 @@ article_df = pd.DataFrame(articles)
 article_df.head()
 
 # Delete the collection if it exists, so we can rewrite it changes to articles were made
-if qdrant.get_collection(collection_name=collection_name):
-    qdrant.delete_collection(collection_name=collection_name)
+# if qdrant.get_collection(collection_name=collection_name):
+#     qdrant.delete_collection(collection_name=collection_name)
 
 # Create Vector DB collection
 qdrant.create_collection(
